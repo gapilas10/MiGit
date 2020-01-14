@@ -1,8 +1,9 @@
 #pragma once
 
-
 #include <gl/glew.h>
 #include <glfw/glfw3.h>
+
+#include "GameLevel.h"
 
 // Represents the current state of the game
 enum GameState
@@ -12,6 +13,10 @@ enum GameState
 	GAME_END
 };
 
+// Initial size of the player paddle
+const glm::vec2 PLAYER_SIZE(100, 100);
+// Initial velocity of the player paddle
+const GLfloat PLAYER_VELOCITY(500.0f);
 
 class Game
 {
@@ -20,6 +25,7 @@ public:
 	GameState	State;
 	GLboolean	Keys[1024];
 	GLuint		Width, Height;
+	GameLevel		Level;
 	// Constructor/Destructor
 	Game(GLuint width, GLuint height);
 	~Game();
