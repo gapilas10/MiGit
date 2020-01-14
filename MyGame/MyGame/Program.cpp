@@ -10,7 +10,7 @@
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
 // The Width of the screen
-const GLuint SCREEN_WIDTH = 1024;
+const GLuint SCREEN_WIDTH = 1080;
 // The height of the screen
 const GLuint SCREEN_HEIGHT = 720;
 
@@ -26,6 +26,7 @@ int main(int argc, char* argv[])
 
 	GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Universe Jump", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
+
 
 	glewExperimental = GL_TRUE;
 	glewInit();
