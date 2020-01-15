@@ -13,10 +13,10 @@ enum GameState
 	GAME_END
 };
 
-// Initial size of the player paddle
-const glm::vec2 PLAYER_SIZE(100, 100);
-// Initial velocity of the player paddle
-const GLfloat PLAYER_VELOCITY(500.0f);
+//// Initial size of the player paddle
+//const glm::vec2 PLAYER_SIZE(50, 50);
+//// Initial velocity of the player paddle
+//const GLfloat PLAYER_VELOCITY(500.0f);
 
 class Game
 {
@@ -35,5 +35,6 @@ public:
 	void ProcessInput(GLfloat dt);
 	void Update(GLfloat dt);
 	void Render();
+	void DoCollisions();
 };
 
