@@ -71,7 +71,7 @@ void Game::ProcessInput(GLfloat dt)
 {
 	if (this->State == GAME_ACTIVE)
 	{
-		GLfloat velocity = 500.f * dt;
+		GLfloat velocity = Player->playerSpeed* dt;
 		// Move player horizontally
 		if(this->Keys[GLFW_KEY_A])
 		{
@@ -91,14 +91,15 @@ void Game::ProcessInput(GLfloat dt)
 		{
 			if (Player->Position.y >= 0) // If not on top wall
 			{
-				Player->Position.y -= velocity; // move right
+				velocity *= 2;
+				Player->Position.y -= velocity; // move down
 			}
 		}
 		if (this->Keys[GLFW_KEY_S])
 		{
-			if (Player->Position.y <= this->Height - Player->Size.y) // If not on top wall
+			if (Player->Position.y <= this->Height - Player->Size.y) // If not on bottom wall
 			{
-				Player->Position.y += velocity; // move right
+				Player->Position.y += velocity; // move down
 			}
 		}
 	}
