@@ -35,6 +35,7 @@ public:
 	void ProcessInput(GLfloat dt);
 	void Update(GLfloat dt);
 	void Render();
-	void DoCollisions();
+	bool DoCollisions();
+	glm::vec2 DoGravity(GLfloat dt);
 };
 

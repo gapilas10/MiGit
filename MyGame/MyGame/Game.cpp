@@ -49,20 +49,77 @@ void Game::Init()
 
 void Game::Update(GLfloat dt)
 {
-	// Check for collisions
-	this->DoCollisions();
-	Player->Gravity(dt, this->Height);
+	//Player->Gravity(dt, this->Height, DoCollisions());
+	DoGravity(dt);
 }
 
-void Game::DoCollisions()
+glm::vec2 Game::DoGravity(GLfloat dt)
 {
+	if(!DoCollisions())
+	{
+		// Check if outsite window bounds and if so return
+		if (Player->Position.y >= this->Height - Player->Size.y)
+		{
+			return Player->Position;
+		}
+
+		Player->Position.y += Player->playerSpeed * dt / 2; // Acting as gravity
+		Player->LastMove = NONE;
+		return Player->Position;
+	}
+}
+
+GLboolean CheckCollision(GameObject& one, GameObject& two);
+
+bool Game::DoCollisions()
+{
+	bool collision = false;
 	for (GameObject &platform : this->Level.Platforms)
 	{
-		//if(CheckCollision(*Player, platform))
-		//{
-		//	
-		//}
+		if(CheckCollision(*Player, platform))
+		{
+			//There was a collision
+			//find out and 'uncollide'
+
+			switch (Player->LastMove)
+			{
+			case LEFT:
+				Player->State = COLLISION_LEFT;
+				Player->Position.x += 1;
+				break;
+			case RIGHT:
+				Player->State = COLLISION_RIGHT;
+				Player->Position.x -= 1;
+				break;
+			case UP:
+				Player->State = COLLISION_TOP;
+				Player->Position.y += 1;
+				break;
+			case NONE:
+				Player->State = COLLISION_BOTTOM;
+				Player->Position.y -= 1;
+				break;
+			}
+			collision = true;
+		}
+		else
+		{
+			Player->State = COLLISION_NONE;
+		}
 	}
+	return collision;
+}
+
+GLboolean CheckCollision(GameObject &one, GameObject &two)
+{
+	// Collision x-axis?
+	bool collisionX = one.Position.x + one.Size.x >= two.Position.x &&
+		two.Position.x + two.Size.x >= one.Position.x;
+	// Collision y-axis?
+	bool collisionY = one.Position.y + one.Size.y >= two.Position.y &&
+		two.Position.y + two.Size.y >= one.Position.y;
+	// Collision only if on both axes
+	return collisionX && collisionY;
 }
 
 
@@ -72,34 +129,44 @@ void Game::ProcessInput(GLfloat dt)
 	if (this->State == GAME_ACTIVE)
 	{
 		GLfloat velocity = Player->playerSpeed* dt;
-		// Move player horizontally
+		// Move player left
 		if(this->Keys[GLFW_KEY_A])
 		{
 			if (Player->Position.x >= 0) // If not on left wall
 			{
-				Player->Position.x -= velocity; // move left
+				// Check for collisions
+				if (!DoCollisions())
+				{
+					Player->Position.x -= velocity; // move left
+					Player->LastMove = LEFT;
+				}
 			}
 		}
+		// Move player right
 		if (this->Keys[GLFW_KEY_D])
 		{
 			if (Player->Position.x <= this->Width - Player->Size.x) // If not on right wall
 			{
-				Player->Position.x += velocity; // move right
+				// Check for collisions
+				if (!DoCollisions())
+				{
+					Player->Position.x += velocity; // move right
+					Player->LastMove = RIGHT;
+				}
 			}
 		}
+		// Move player up
 		if (this->Keys[GLFW_KEY_W])
 		{
 			if (Player->Position.y >= 0) // If not on top wall
 			{
-				velocity *= 2;
-				Player->Position.y -= velocity; // move down
-			}
-		}
-		if (this->Keys[GLFW_KEY_S])
-		{
-			if (Player->Position.y <= this->Height - Player->Size.y) // If not on bottom wall
-			{
-				Player->Position.y += velocity; // move down
+				// Check for collisions
+				if (!DoCollisions())
+				{
+					velocity *= 2;
+					Player->Position.y -= velocity; // move down
+					Player->LastMove = UP;
+				}
 			}
 		}
 	}
