@@ -3,13 +3,14 @@
 #include "SpriteRenderer.h"
 #include "GameObject.h"
 #include "PlayerObject.h"
+#include <iostream>
 
 // Game-related State data
 SpriteRenderer* Renderer;
 PlayerObject* Player;
 
 Game::Game(GLuint width, GLuint height)
-	: State(GAME_ACTIVE), Keys(), Width(width), Height(height)
+	: State(GAME_ACTIVE), Keys(), Width(width), Height(height), Level(0)
 {
 
 }
@@ -30,17 +31,22 @@ void Game::Init()
 	ResourceManager::GetShader("sprite").SetMatrix4("projection", projection);
 	// Load textures
 	ResourceManager::LoadTexture("textures/background.jpg", GL_FALSE, "background");
-	ResourceManager::LoadTexture("textures/awesomeface.png", GL_TRUE, "face");
-	ResourceManager::LoadTexture("textures/block_solid.png", GL_FALSE, "block_solid");
+	ResourceManager::LoadTexture("textures/lava_block.png", GL_FALSE, "block_solid");
 	ResourceManager::LoadTexture("textures/spaceship.png", true, "spaceship");
 	// Set render-specific controls
 	Shader myShader;
 	myShader = ResourceManager::GetShader("sprite");
 	Renderer = new SpriteRenderer(myShader);
 	//Load level
-	GameLevel MainLevel;
-	MainLevel.Load("levels/MainLevel.lvl", this->Width, this->Height);
-	this->Level = MainLevel;
+	GameLevel MainLevel;	MainLevel.Load("levels/MainLevel.lvl", this->Width, this->Height);
+	GameLevel SecondLevel;	SecondLevel.Load("levels/SecondLevel.lvl", this->Width, this->Height);
+	GameLevel ThirdLevel;	ThirdLevel.Load("levels/ThirdLevel.lvl", this->Width, this->Height);
+	GameLevel FinalLevel;	FinalLevel.Load("levels/FinalLevel.lvl", this->Width, this->Height);
+	this->Levels.push_back(MainLevel);
+	this->Levels.push_back(SecondLevel);
+	this->Levels.push_back(ThirdLevel);
+	this->Levels.push_back(FinalLevel);
+	this->Level = 0;
 	// Configure game objects
 	glm::vec2 playerPos = glm::vec2(this->Width / 2 - 50 / 2, this->Height - 50);
 	glm::vec2 playerSize(50, 50);
@@ -49,17 +55,41 @@ void Game::Init()
 
 void Game::Update(GLfloat dt)
 {
-	//Player->Gravity(dt, this->Height, DoCollisions());
 	DoGravity(dt);
+	Refuel();
+}
+
+void Game::Refuel()
+{
+	if(Player->Fuel < 30)
+	{
+		Player->Fuel += 0.1;
+	}
 }
 
 glm::vec2 Game::DoGravity(GLfloat dt)
 {
 	if(!DoCollisions())
 	{
-		// Check if outsite window bounds and if so return
+		// Check if outsite window bounds
 		if (Player->Position.y >= this->Height - Player->Size.y)
 		{
+		// Check level
+			switch (this->Level)
+			{
+			case 1:
+				this->Level--;
+				Player->Position.y = 0;
+				break;
+			case 2:
+				this->Level--;
+				Player->Position.y = 0;
+				break;
+			case 3:
+				this->Level--;
+				Player->Position.y = 0;
+				break;
+			}
 			return Player->Position;
 		}
 
@@ -74,7 +104,7 @@ GLboolean CheckCollision(GameObject& one, GameObject& two);
 bool Game::DoCollisions()
 {
 	bool collision = false;
-	for (GameObject &platform : this->Level.Platforms)
+	for (GameObject &platform : this->Levels[this->Level].Platforms)
 	{
 		if(CheckCollision(*Player, platform))
 		{
@@ -93,7 +123,10 @@ bool Game::DoCollisions()
 				break;
 			case UP:
 				Player->State = COLLISION_TOP;
-				Player->Position.y += 1;
+				if (Player->Position.y > 0) // If not on top of the screen
+				{
+					Player->Position.y += 1;
+				}
 				break;
 			case NONE:
 				Player->State = COLLISION_BOTTOM;
@@ -158,14 +191,40 @@ void Game::ProcessInput(GLfloat dt)
 		// Move player up
 		if (this->Keys[GLFW_KEY_W])
 		{
-			if (Player->Position.y >= 0) // If not on top wall
-			{
-				// Check for collisions
-				if (!DoCollisions())
+			if (Player->Fuel >= 0)
+			{ // If the ship has enough fuel				
+				if (Player->Position.y >= 0) // If not on top wall
 				{
-					velocity *= 2;
-					Player->Position.y -= velocity; // move down
-					Player->LastMove = UP;
+					// Check for collisions
+					if (!DoCollisions())
+					{
+						velocity *= 2;
+						Player->Position.y -= velocity; // move down
+						Player->LastMove = UP;
+						Player->Fuel -= 1;
+					}
+				}
+				else
+				{
+					Player->Fuel = 30;
+					switch (this->Level)
+					{
+					case 0:
+						this->Level++;
+						Player->Position.y = Height - Player->Size.y;
+						break;
+					case 1:
+						this->Level++;
+						Player->Position.y = Height - Player->Size.y;
+						break;
+					case 2:
+						this->Level++;
+						Player->Position.y = Height - Player->Size.y;
+						this->Render();
+						break;
+					case 3:
+						break;
+					}
 				}
 			}
 		}
@@ -178,7 +237,7 @@ void Game::Render()
 	// Draw background
 	Renderer->DrawSprite(myTexture, glm::vec2(0, 0), glm::vec2(this->Width, this->Height), 0.0f);
 	// Draw level
-	this->Level.Draw(*Renderer);
+	this->Levels[this->Level].Draw(*Renderer);
 	// Draw player
 	Player->Draw(*Renderer);
 }

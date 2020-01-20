@@ -25,7 +25,8 @@ public:
 	GameState	State;
 	GLboolean	Keys[1024];
 	GLuint		Width, Height;
-	GameLevel		Level;
+	std::vector<GameLevel>		Levels;
+	GLuint Level;
 	// Constructor/Destructor
 	Game(GLuint width, GLuint height);
 	~Game();
@@ -36,6 +37,7 @@ public:
 	void Update(GLfloat dt);
 	void Render();
 	bool DoCollisions();
+	static void Refuel();
 	glm::vec2 DoGravity(GLfloat dt);
 };
 

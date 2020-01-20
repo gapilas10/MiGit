@@ -147,13 +147,15 @@
     <ClInclude Include="Texture.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="levels\FinalLevel.lvl" />
     <None Include="levels\MainLevel.lvl" />
+    <None Include="levels\SecondLevel.lvl" />
+    <None Include="levels\ThirdLevel.lvl" />
     <None Include="packages.config" />
     <None Include="shaders\sprite.frag" />
     <None Include="shaders\sprite.vs" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="textures\awesomeface.png" />
     <Image Include="textures\background.jpg" />
     <Image Include="textures\block_solid.png" />
     <Image Include="textures\paddle.png" />

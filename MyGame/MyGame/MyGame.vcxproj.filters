@@ -80,18 +80,24 @@
     <None Include="levels\MainLevel.lvl">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="levels\FinalLevel.lvl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="levels\SecondLevel.lvl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="levels\ThirdLevel.lvl">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="textures\background.jpg">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="textures\block_solid.png">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="textures\paddle.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="textures\awesomeface.png">
+    <Image Include="textures\background.jpg">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

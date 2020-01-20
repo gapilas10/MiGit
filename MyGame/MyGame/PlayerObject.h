@@ -33,6 +33,8 @@ public:
 	CollisionState State;
 	LastMove LastMove;
 	GLfloat playerSpeed{};
+	GLfloat Fuel;
+	
 	// Constructor(s)
 	PlayerObject();
 	PlayerObject(glm::vec2 pos, glm::vec2 size, Texture2D sprite);
