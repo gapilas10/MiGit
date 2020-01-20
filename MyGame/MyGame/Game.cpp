@@ -207,11 +207,11 @@ void Game::ProcessInput(GLfloat dt)
 				else
 				{
 					Player->Fuel = 30;
-					switch (this->Level)
+					switch (this->Level) //Check current level and change accordingly
 					{
-					case 0:
+					case 0: 
 						this->Level++;
-						Player->Position.y = Height - Player->Size.y;
+						Player->Position.y = Height - Player->Size.y; //"Reset so that the player appears at the bottom of the screen as if the ship teleported there
 						break;
 					case 1:
 						this->Level++;
@@ -236,7 +236,7 @@ void Game::Render()
 	Texture2D myTexture = ResourceManager::GetTexture("background");
 	// Draw background
 	Renderer->DrawSprite(myTexture, glm::vec2(0, 0), glm::vec2(this->Width, this->Height), 0.0f);
-	// Draw level
+	// Draw current level
 	this->Levels[this->Level].Draw(*Renderer);
 	// Draw player
 	Player->Draw(*Renderer);
